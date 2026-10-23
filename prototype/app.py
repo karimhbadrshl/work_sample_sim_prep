@@ -1,7 +1,8 @@
 """Streamlit front end: candidate view (task + reply) and recruiter view (score, evidence, review routing).
-Extra tabs show the evaluation results and the write-up, so a hosted copy is self-contained.
+Tabs for evidence and approach make the hosted copy self-contained for non-technical reviewers.
 
-Run:  streamlit run app.py      (LLM_MODE=mock by default; set LLM_MODE=live and ANTHROPIC_API_KEY for the real model)
+Run from the repo root:  streamlit run prototype/app.py
+(LLM_MODE=mock by default; set LLM_MODE=live and ANTHROPIC_API_KEY for the real model.)
 """
 import json
 import pathlib
@@ -10,29 +11,29 @@ import sys
 import streamlit as st
 
 HERE = pathlib.Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))   # so config/scorer import the same way locally and in the browser build
+sys.path.insert(0, str(HERE))   # so local modules import the same way locally and in the browser build
 
+import brand  # noqa: E402
 import config as C  # noqa: E402
 import scorer  # noqa: E402
 
 IN_BROWSER = sys.platform == "emscripten"   # True in the static HTML build (Pyodide)
 
-st.set_page_config(page_title="Customer reply task (prototype)", layout="wide")
-st.title("Customer reply task: prototype")
-st.caption(f"Mode: **{scorer.MODE}** · scorer: {scorer.MODEL if scorer.MODE == 'live' else 'mock rules (no API call)'} · "
-           f"version {C.PROMPT_VERSION} · synthetic content only")
+st.set_page_config(page_title="Work sample prototype", layout="wide")
+brand.apply(C.APP_KICKER, C.APP_TITLE)
+st.markdown(C.SHORT_DESCRIPTION)
 
 if scorer.MODE == "mock":
     st.info(
-        "**How to use this demo.** 1) Pick a synthetic example from the drop-down on the left, or write your own reply. "
-        "2) Press **Submit**. 3) The right-hand side shows what a recruiter would see: the score, the evidence for it, "
-        "and whether a person needs to review it.  \n"
-        "This hosted copy runs in **mock mode**: a simple, transparent rules scorer stands in for the AI model so the demo "
-        "is free and needs no API key. The proposed AI scorer is in the code and described in the write-up."
-        + ("  \nIt runs entirely in your browser: nothing you type is sent anywhere." if IN_BROWSER else "")
+        "**How to use this demo.** 1) In *Try the task*, pick an example from the drop-down or write your own reply. "
+        f"2) Press **{C.SUBMIT_LABEL}**. 3) The right-hand side shows what a recruiter would see: the score, the evidence "
+        "for it, and whether a person needs to review it.  \n"
+        "This copy runs in **mock mode**: a simple, transparent rules scorer stands in for the AI model, so it is free "
+        "and needs no API key. The AI scorer is in the code and described under *Approach*."
+        + ("  \nEverything runs in your browser. Nothing you type is sent anywhere." if IN_BROWSER else "")
     )
 
-tab_try, tab_eval, tab_write = st.tabs(["Try the task", "Evaluation results", "Write-up"])
+tab_try, tab_eval, tab_approach = st.tabs(["Try the task", "Evidence", "Approach"])
 
 with tab_try:
     left, right = st.columns(2)
@@ -52,9 +53,10 @@ with tab_try:
         examples |= {f"{g['id']}: intended score {g['intended']}": g["text"] for g in gold}
         examples |= {f"{c['id']}: robustness test": c["text"] for c in rf["robustness"] if "LONG_FILLER" not in c["text"]}
         pick = st.selectbox("Load a synthetic example", list(examples))
-        text = st.text_area("Your reply", value=examples[pick], height=260)
+        # Key per example: otherwise Streamlit keeps the old text when a different example is picked.
+        text = st.text_area("Your reply", value=examples[pick], height=260, key=f"reply::{pick}")
         st.caption(f"{len(text.split())} words")
-        go = st.button("Submit", type="primary")
+        go = st.button(C.SUBMIT_LABEL, type="primary")
 
     with right:
         st.subheader("Recruiter view")
@@ -73,13 +75,13 @@ with tab_try:
                 st.markdown("**Indicators and evidence from the reply**")
                 for k, desc in C.INDICATORS.items():
                     v = r["indicators"][k]
-                    mark = "✅" if v["present"] else "❌"
-                    ev = f" — “{v['evidence']}”" if v["evidence"] else ""
-                    st.markdown(f"{mark} **{k}**: {desc}{ev}")
+                    ev = f" “{v['evidence']}”" if v["evidence"] else ""
+                    label = "present" if v["present"] else "missing"
+                    st.markdown(f"{brand.tag(label, v['present'])} **{k}**: {desc}{ev}", unsafe_allow_html=True)
             with st.expander("Audit record (what would be logged)"):
                 st.json(r)
         else:
-            st.info("Submit a reply to see the score, evidence and review routing.")
+            st.info(f"Press {C.SUBMIT_LABEL} to see the score, evidence and review routing.")
 
     with st.expander("Scoring rubric"):
         st.text(C.RUBRIC)
@@ -87,8 +89,7 @@ with tab_try:
 with tab_eval:
     st.markdown((HERE / "evals/results.md").read_text(encoding="utf-8"))
 
-with tab_write:
-    st.markdown((HERE.parent / "WRITEUP.md").read_text(encoding="utf-8"))
+with tab_approach:
+    st.markdown((HERE / "APPROACH.md").read_text(encoding="utf-8"))
 
-st.divider()
-st.caption("Scores support, and do not replace, a recruiter's decision. Flagged or low-confidence replies always go to a person.")
+brand.footer("Scores support, and do not replace, a recruiter's decision. Flagged or low-confidence replies always go to a person.")

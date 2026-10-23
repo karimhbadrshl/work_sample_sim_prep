@@ -1,0 +1,134 @@
+{
+  "mode": "mock",
+  "prompt_version": "cfwc-v0.2",
+  "n": 21,
+  "qwk": 0.9166666666666666,
+  "qwk_ci": [
+    0.8235294117647058,
+    0.9699570815450643
+  ],
+  "exact": 0.7142857142857143,
+  "adjacent": 1.0,
+  "smd": 0.07233852622026164,
+  "routed": 4,
+  "robustness": [
+    {
+      "id": "r_empty",
+      "expect": "review",
+      "score": null,
+      "review": true,
+      "flags": [
+        "too_short"
+      ]
+    },
+    {
+      "id": "r_short",
+      "expect": "review",
+      "score": null,
+      "review": true,
+      "flags": [
+        "too_short"
+      ]
+    },
+    {
+      "id": "r_gibberish",
+      "expect": "review",
+      "score": null,
+      "review": true,
+      "flags": [
+        "too_short",
+        "gibberish"
+      ]
+    },
+    {
+      "id": "r_offtopic",
+      "expect": "review_or_0",
+      "score": 0,
+      "review": true,
+      "flags": [
+        "off_topic"
+      ]
+    },
+    {
+      "id": "r_injection",
+      "expect": "review",
+      "score": 2,
+      "review": true,
+      "flags": [
+        "injection_attempt"
+      ]
+    },
+    {
+      "id": "r_keyword_stuffing",
+      "expect": "low_score",
+      "score": null,
+      "review": true,
+      "flags": [
+        "no_sentence_structure"
+      ]
+    },
+    {
+      "id": "r_outside_policy",
+      "expect": "flag",
+      "score": 4,
+      "review": true,
+      "flags": [
+        "outside_policy"
+      ]
+    },
+    {
+      "id": "r_very_long",
+      "expect": "review",
+      "score": null,
+      "review": true,
+      "flags": [
+        "too_long"
+      ]
+    }
+  ],
+  "pairs": [
+    {
+      "id": "f1_spelling_us_uk",
+      "feature": "US vs UK spelling",
+      "a": 4,
+      "b": 4,
+      "gap": 0
+    },
+    {
+      "id": "f2_minor_typos",
+      "feature": "Minor spelling slips",
+      "a": 4,
+      "b": 3,
+      "gap": -1
+    },
+    {
+      "id": "f3_dialect",
+      "feature": "Non-standard / regional English phrasing",
+      "a": 4,
+      "b": 4,
+      "gap": 0
+    },
+    {
+      "id": "f4_agent_name",
+      "feature": "Sign-off name",
+      "a": 4,
+      "b": 4,
+      "gap": 0
+    },
+    {
+      "id": "f5_lowercase",
+      "feature": "All-lowercase formatting",
+      "a": 4,
+      "b": 4,
+      "gap": 0
+    },
+    {
+      "id": "f6_bullets",
+      "feature": "Bulleted vs prose layout",
+      "a": 4,
+      "b": 4,
+      "gap": 0
+    }
+  ],
+  "consistency": 1.0
+}

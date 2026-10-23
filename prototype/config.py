@@ -2,7 +2,13 @@
 
 PROMPT_VERSION = "cfwc-v0.2"   # pipeline version: prompt + rubric + pre-checks. v0.2 adds the sentence-structure guard
 
-TASK_TITLE = "Reply to a customer"
+APP_KICKER = "Work sample · AI-scored written response"
+APP_TITLE = "Scoring customer replies with evidence a recruiter can check"   # a claim, sentence case, no full stop
+SHORT_DESCRIPTION = (
+    "A candidate replies to an upset customer. The reply is scored 0-4 on customer-focused written "
+    "communication, with quoted evidence and a human-review flag."
+)
+SUBMIT_LABEL = "Submit"   # tools/e2e_check.py clicks this label
 
 # Stimulus (invented). Policy facts give candidates something concrete to resolve with.
 CUSTOMER_EMAIL = """Subject: Worst service ever

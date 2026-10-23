@@ -47,6 +47,9 @@ def main():
     h = [g["intended"] for g in gold]
     m = [r["score"] if r["score"] is not None else 0 for r in res]
     lo, hi = boot_ci(h, m, qwk)
+    summary = {"mode": scorer.MODE, "prompt_version": scorer.C.PROMPT_VERSION, "n": len(h),
+               "qwk": qwk(h, m), "qwk_ci": [lo, hi], "exact": exact(h, m), "adjacent": adjacent(h, m),
+               "smd": smd(h, m), "routed": int(sum(r["needs_review"] for r in res)), "robustness": [], "pairs": []}
     lines += ["## 1. Agreement with intended scores", "",
               f"*n* = {len(h)} invented responses spanning 0-4.", "",
               "| Statistic | Value |", "|---|---|",
@@ -74,6 +77,8 @@ def main():
     for c in rf["robustness"]:
         text = c["text"].replace("LONG_FILLER", "I really want to help. " * 120)
         r = scorer.score_response(text)
+        summary["robustness"].append({"id": c["id"], "expect": c["expect"], "score": r["score"],
+                                      "review": r["needs_review"], "flags": r["flags"]})
         lines.append(f"| {c['id']} | {c['expect']} | {r['score']} | {'yes' if r['needs_review'] else 'no'} | {', '.join(r['flags']) or '-'} |")
     lines.append("")
 
@@ -84,6 +89,7 @@ def main():
     for p in rf["fairness_pairs"]:
         a, b = scorer.score_response(p["a"])["score"], scorer.score_response(p["b"])["score"]
         gap = (b or 0) - (a or 0); gaps.append(gap)
+        summary["pairs"].append({"id": p["id"], "feature": p["feature"], "a": a, "b": b, "gap": gap})
         lines.append(f"| {p['id']} | {p['feature']} | {a} | {b} | {gap:+d} |")
     lines += ["", f"Mean gap (B - A) = {np.mean(gaps):+.2f}; pairs with |gap| >= 1: {sum(abs(g) >= 1 for g in gaps)} of {len(gaps)}.", "",
               "## What this does not show", "",
@@ -93,6 +99,8 @@ def main():
               ]
     out = "\n".join(lines)
     (ROOT / "evals/results.md").write_text(out, encoding="utf-8")
+    summary["consistency"] = float(same)
+    (ROOT / "evals/results.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")   # read by the Word write-up builder
     print(out)
 
 

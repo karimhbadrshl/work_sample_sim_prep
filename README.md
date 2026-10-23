@@ -2,25 +2,26 @@
 
 ## ▶ [Open the live prototype](https://karimhbadrshl.github.io/work_sample_sim_prep/)
 
-You don't need to install anything. The link opens the working prototype in your browser. The first load takes about 10 to 30 seconds while it starts up. Everything runs inside your browser, and nothing you type is sent anywhere.
+**No installation needed.** The link opens the working prototype in your browser. The first load takes about 10 to 30 seconds. Everything runs inside your browser, and nothing you type is sent anywhere.
 
-**Inside the prototype:**
+**What to do when it opens**
 
-1. **Try the task.** Pick a synthetic example reply from the drop-down, or type your own, and press **Submit**. You'll see what a recruiter would see: the score (0-4), the evidence quoted from the reply, and whether a person needs to review it. The examples labelled *robustness test* show how the system handles cheating attempts and unusable replies.
-2. **Evaluation results.** Agreement with intended scores, robustness checks and matched-pair fairness checks.
-3. **Write-up.** My approach, key decisions, fairness and regulatory considerations, and the path to production.
+1. **Try the task.** Pick an example reply from the drop-down, or type your own, and press **Submit**. You'll see what a recruiter would see: the score (0-4), the evidence quoted from the reply, and whether a person needs to review it.
+2. **Try the tricky ones.** The examples labelled *robustness test* show how the system handles attempts to manipulate the AI and unusable replies.
+3. **See the evidence.** The *Evidence* tab shows how well the scores agree with intended scores, plus robustness and fairness checks. The *Approach* tab summarises the design in one screen.
 
-The hosted demo runs in **mock mode**. A simple, transparent rules scorer stands in for the AI model, so the demo is free and needs no API key. The AI scorer (Anthropic API, structured outputs) is in the code and switches on with one setting.
+The demo runs in **mock mode**. A simple, transparent rules scorer stands in for the AI model, so it is free and needs no API key. The AI scorer is in the code and switches on with one setting.
 
-## Documents
-
-| Document | What it covers |
-|---|---|
-| [WRITEUP.md](WRITEUP.md) | Approach, decisions, quality evidence, fairness, limits, path to production (two pages) |
-| [DECISIONS.md](DECISIONS.md) | Decisions log: what I chose, what I rejected, and the trade-off |
-| [prototype/evals/results.md](prototype/evals/results.md) | Full evaluation output |
-| [BRIEF.md](BRIEF.md) | The brief this responds to |
+---
 
 ## For technical reviewers
 
-The code is in [prototype/](prototype/). See [prototype/README.md](prototype/README.md) for how to run it locally in mock or live mode. All data is synthetic. There is no real candidate data.
+| | |
+|---|---|
+| [prototype/](prototype/) | The app, scorer, prompts and rubric (`config.py`), synthetic data, evaluation. See [prototype/README.md](prototype/README.md) to run it locally. |
+| [DECISIONS.md](DECISIONS.md) | Decisions log: what I chose, what I rejected, and the trade-off |
+| [prototype/evals/results.md](prototype/evals/results.md) | Full evaluation output |
+| [tools/](tools/) | Static build for this page (`build_static.py`), browser check, publishing |
+| [BRIEF.md](BRIEF.md) | The brief this responds to |
+
+All data are synthetic. There is no real candidate data.

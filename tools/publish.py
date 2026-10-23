@@ -30,6 +30,8 @@ def main(name: str):
     url = f"https://{user}.github.io/{name}/"
     repo_url = f"https://github.com/{user}/{name}"
 
+    if not (REPO / ".git").exists():   # fresh starter folder: make it a repo on main
+        run("git", "init", "-b", "main")
     run(sys.executable, "tools/build_static.py")
     readme = REPO / "README.md"
     readme.write_text(re.sub(r"https://REPLACE-ME[^)\s]*|https://[\w-]+\.github\.io/[\w.-]+/", url,

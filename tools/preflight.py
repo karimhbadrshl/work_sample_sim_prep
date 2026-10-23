@@ -41,6 +41,13 @@ def main():
             problems.append("docs/index.html is older than prototype/: run python tools/build_static.py")
     if "REPLACE-ME" in (REPO / "README.md").read_text(encoding="utf-8"):
         problems.append("README.md still has the REPLACE-ME demo link (tools/publish.py fills it)")
+    cfg = (REPO / "prototype/config.py").read_text(encoding="utf-8")
+    if re.search(r"^EXAMPLE_CONTENT\s*=\s*True", cfg, re.M):
+        problems.append("prototype/config.py still has EXAMPLE_CONTENT = True (starter example not replaced)")
+    for f in ["README.md", "DECISIONS.md", "prototype/APPROACH.md"]:
+        p = REPO / f
+        if p.exists() and "[EDIT" in p.read_text(encoding="utf-8"):
+            problems.append(f"{f} still has [EDIT ...] placeholders")
     for p in problems:
         print("FAIL", p)
     print("preflight:", "OK" if not problems else f"{len(problems)} problem(s)")

@@ -2,7 +2,10 @@
 
 PROMPT_VERSION = "cfwc-v0.2"   # pipeline version: prompt + rubric + pre-checks. v0.2 adds the sentence-structure guard
 
-APP_KICKER = "Work sample · AI-scored written response"
+# True while this file still holds the starter's example task. tools/preflight.py refuses to publish until False.
+EXAMPLE_CONTENT = False
+
+APP_KICKER ="Work sample · AI-scored written response"
 APP_TITLE = "Scoring customer replies with evidence a recruiter can check"   # a claim, sentence case, no full stop
 SHORT_DESCRIPTION = (
     "A candidate replies to an upset customer. The reply is scored 0-4 on customer-focused written "

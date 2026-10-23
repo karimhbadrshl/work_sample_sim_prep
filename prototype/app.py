@@ -21,6 +21,8 @@ IN_BROWSER = sys.platform == "emscripten"   # True in the static HTML build (Pyo
 
 st.set_page_config(page_title="Work sample prototype", layout="wide")
 brand.apply(C.APP_KICKER, C.APP_TITLE)
+if getattr(C, "EXAMPLE_CONTENT", False):
+    st.warning("Starter example content. Replace the task in prototype/config.py and set EXAMPLE_CONTENT = False.")
 st.markdown(C.SHORT_DESCRIPTION)
 
 if scorer.MODE == "mock":
@@ -86,10 +88,14 @@ with tab_try:
     with st.expander("Scoring rubric"):
         st.text(C.RUBRIC)
 
+def show_md(path: pathlib.Path, missing: str):
+    st.markdown(path.read_text(encoding="utf-8") if path.exists() else missing)
+
+
 with tab_eval:
-    st.markdown((HERE / "evals/results.md").read_text(encoding="utf-8"))
+    show_md(HERE / "evals/results.md", "No results yet: run `python prototype/evals/run_eval.py`.")
 
 with tab_approach:
-    st.markdown((HERE / "APPROACH.md").read_text(encoding="utf-8"))
+    show_md(HERE / "APPROACH.md", "Approach summary not written yet.")
 
 brand.footer("Scores support, and do not replace, a recruiter's decision. Flagged or low-confidence replies always go to a person.")

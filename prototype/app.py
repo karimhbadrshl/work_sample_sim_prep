@@ -5,13 +5,17 @@ Run:  streamlit run app.py      (LLM_MODE=mock by default; set LLM_MODE=live and
 """
 import json
 import pathlib
+import sys
 
 import streamlit as st
 
-import config as C
-import scorer
-
 HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))   # so config/scorer import the same way locally and in the browser build
+
+import config as C  # noqa: E402
+import scorer  # noqa: E402
+
+IN_BROWSER = sys.platform == "emscripten"   # True in the static HTML build (Pyodide)
 
 st.set_page_config(page_title="Customer reply task (prototype)", layout="wide")
 st.title("Customer reply task: prototype")
@@ -25,6 +29,7 @@ if scorer.MODE == "mock":
         "and whether a person needs to review it.  \n"
         "This hosted copy runs in **mock mode**: a simple, transparent rules scorer stands in for the AI model so the demo "
         "is free and needs no API key. The proposed AI scorer is in the code and described in the write-up."
+        + ("  \nIt runs entirely in your browser: nothing you type is sent anywhere." if IN_BROWSER else "")
     )
 
 tab_try, tab_eval, tab_write = st.tabs(["Try the task", "Evaluation results", "Write-up"])
@@ -35,7 +40,9 @@ with tab_try:
     with left:
         st.subheader("Candidate view")
         st.markdown("**Customer email**")
-        st.code(C.CUSTOMER_EMAIL, language=None)
+        # Quote block wraps long lines; escape a leading "-" so the sign-off isn't drawn as a bullet.
+        st.markdown("\n".join("> " + line.replace("- ", "\\- ", 1) if line.startswith("- ") else "> " + line
+                              for line in C.CUSTOMER_EMAIL.splitlines()))
         st.markdown(C.POLICY_NOTES.replace("\n", "  \n"))
         st.markdown(f"**{C.CANDIDATE_INSTRUCTIONS}**")
 

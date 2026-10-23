@@ -1,8 +1,8 @@
 # AI-scored customer reply task: work-sample prototype
 
-## ▶ [Open the live prototype](https://REPLACE-ME.streamlit.app)
+## ▶ [Open the live prototype](https://karimhbadrshl.github.io/work_sample_sim_prep/)
 
-You don't need to install anything. The link opens the working prototype in your browser. If you see a message that the app is asleep, click **"Yes, get this app back up!"** and wait about 30 seconds.
+You don't need to install anything. The link opens the working prototype in your browser. The first load takes about 10 to 30 seconds while it starts up. Everything runs inside your browser, and nothing you type is sent anywhere.
 
 **Inside the prototype:**
 

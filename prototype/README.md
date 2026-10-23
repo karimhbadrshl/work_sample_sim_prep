@@ -16,6 +16,10 @@ python evals/run_eval.py      # writes evals/results.md
 
 Mock mode is the default. Scoring uses transparent keyword rules (`mock_score` in `scorer.py`), so a reviewer can always run the app. These rules are **not** the proposed scorer. They are a deterministic baseline, and they also show why keyword approaches are not enough.
 
+## Static browser build (what the public link serves)
+
+`python prototype/build_static.py` writes `docs/index.html`. It embeds the same `app.py`, `scorer.py`, `config.py`, data, results and write-up, and runs them in the browser with [stlite](https://github.com/whitphx/stlite) (Streamlit on Pyodide), pinned to v1.9.2. The page needs no server, so GitHub Pages serves it from `/docs`, and the file also works when opened directly. It always runs in mock mode. Re-run the build after changing any of those files.
+
 ## Live mode (Anthropic API)
 
 ```bash
@@ -32,7 +36,8 @@ Live calls use structured outputs: a JSON schema in `config.py`. They also use l
 |---|---|
 | `config.py` | Stimulus, policy notes, indicators, rubric, system prompt, output schema, version label. Everything a content expert would edit is here. |
 | `scorer.py` | Pre-checks, then mock or live scorer, then validation, then the review-routing decision |
-| `app.py` | Streamlit UI: candidate view and recruiter view, with the audit record |
+| `app.py` | Streamlit UI: candidate view and recruiter view, with the audit record, plus tabs for results and write-up |
+| `build_static.py` | Builds `../docs/index.html`, the in-browser version served on GitHub Pages |
 | `data/gold_set.json` | 21 invented replies with intended scores (stand-ins for expert ratings) |
 | `data/robustness_and_fairness.json` | 8 robustness cases and 6 matched pairs |
 | `evals/run_eval.py` | Agreement (QWK, exact, adjacent, SMD, bootstrap CI), repeat runs, robustness, matched pairs |
